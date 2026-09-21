@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصتي الخاصة للفيديوهات | My Private Video Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1f1f1f;
+            --bg-tertiary: #2d2d2d;
+            --accent-color: #ff0033;
+            --accent-hover: #cc0029;
+            --text-main: #ffffff;
+            --text-sub: #aaaaaa;
+            --border-color: #333333;
+            --card-hover: #282828;
+            --admin-badge: #e50914;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: var(--bg-secondary);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .logo i {
+            color: var(--accent-color);
+            font-size: 1.8rem;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 16px;
+            width: 35%;
+            max-width: 500px;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            width: 100%;
+            padding-right: 8px;
+        }
+
+        .search-bar i {
+            color: var(--text-sub);
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background-color: #3d3d3d;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff0033, #7928ca);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .badge-admin {
+            background-color: var(--admin-badge);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 4px;
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: var(--bg-secondary);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--text-main);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: var(--bg-tertiary);
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            background-color: var(--card-hover);
+        }
+
+        .thumbnail-container {
+            width: 100%;
+            height: 160px;
+            background-color: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .thumbnail-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-overlay {
+            position: absolute;
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .video-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .video-info {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .video-title {
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-meta {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .delete-btn {
+            color: #ff4d4d;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 77, 77, 0.2);
+        }
+
+        .player-view {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .main-video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+
+        .main-video-container video {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .player-details {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .player-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .player-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .player-description {
+            line-height: 1.5;
+            color: #dddddd;
+            font-size: 0.95rem;
+        }
+
+        /* Comments Section Styling */
+        .comments-section {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-top: 15px;
+        }
+
+        .comments-header {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comment-input-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .comment-input-box input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 20px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: white;
+            outline: none;
+        }
+
+        .comment-input-box input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .comment-text {
+            color: #dddddd;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .comment-date {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            font-weight: normal;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: white;
+            outline: none;
+        }
+
+        .form-group input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-color);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-sub);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            color: var(--border-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: var(--bg-primary);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .search-bar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" id="logoBtn">
+            <i class="fa-solid fa-play"></i>
+            منصتي الخاصة
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="بحث عن فيديو...">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+
+        <div class="user-controls" id="userControls"></div>
+    </header>
+
+    <main>
+        <nav class="sidebar">
+            <a class="sidebar-item active" id="navHome"><i class="fa-solid fa-house"></i> الرئيسية</a>
+        </nav>
+
+        <section class="content-area" id="mainContent"></section>
+    </main>
+
+    <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal" id="modalContainer"></div>
+    </div>
+
+    <script>
+        const STORAGE_KEY_USERS = 'my_video_hub_users';
+        const STORAGE_KEY_CURRENT = 'my_video_hub_current_user';
+        const DB_NAME = 'MyVideoHubDB';
+        const DB_VERSION = 1;
+
+        let currentUser = null;
+        let users = [];
+        let db = null;
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = (e) => {
+                    let dbInst = e.target.result;
+                    if (!dbInst.objectStoreNames.contains('videos')) {
+                        dbInst.createObjectStore('videos', { keyPath: 'id' });
+                    }
+                };
+                request.onsuccess = (e) => {
+                    db = e.target.result;
+                    resolve(db);
+                };
+                request.onerror = (e) => reject(e);
+            });
+        }
+
+        async function initApp() {
+            try { await initDB(); } catch (err) { console.error("DB Error", err); }
+
+            users = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) || [];
+            
+            const adminExists = users.some(u => u.isAdmin);
+            if (!adminExists) {
+                openSetupAdminModal();
+            }
+
+            const savedUser = localStorage.getItem(STORAGE_KEY_CURRENT);
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+            }
+
+            renderHeader();
+            renderHome();
+            setupEventListeners();
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+            if (currentUser) {
+                localStorage.setItem(STORAGE_KEY_CURRENT, JSON.stringify(currentUser));
+            } else {
+                localStorage.removeItem(STORAGE_KEY_CURRENT);
+            }
+        }
+
+        function renderHeader() {
+            const controls = document.getElementById('userControls');
+            controls.innerHTML = '';
+
+            if (currentUser) {
+                if (currentUser.isAdmin) {
+                    const uploadBtn = document.createElement('button');
+                    uploadBtn.className = 'btn btn-primary';
+                    uploadBtn.innerHTML = '<i class="fa-solid fa-plus"></i> رفع فيديو جديد';
+                    uploadBtn.onclick = openAddVideoModal;
+                    controls.appendChild(uploadBtn);
+                }
+
+                const userProfile = document.createElement('div');
+                userProfile.className = 'user-profile';
+                userProfile.innerHTML = `
+                    <div class="avatar">${currentUser.name.charAt(0).toUpperCase()}</div>
+                    <div>
+                        <div style="font-size:0.9rem; font-weight:600;">
+                            ${currentUser.isAdmin ? '<span class="badge-admin">المالك</span>' : ''} ${currentUser.name}
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" style="padding: 4px 8px; margin-right: 8px;" title="تسجيل خروج" onclick="logout()">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                `;
+                controls.appendChild(userProfile);
+            } else {
+                const loginBtn = document.createElement('button');
+                loginBtn.className = 'btn btn-primary';
+                loginBtn.innerHTML = '<i class="fa-solid fa-user"></i> تسجيل الدخول';
+                loginBtn.onclick = openLoginModal;
+                controls.appendChild(loginBtn);
+            }
+        }
+
+        function getAllVideosFromDB() {
+            return new Promise((resolve) => {
+                if (!db) return resolve([]);
+                const tx = db.transaction('videos', 'readonly');
+                const store = tx.objectStore('videos');
+                const req = store.getAll();
+                req.onsuccess = () => resolve(req.result || []);
+                req.onerror = () => resolve([]);
+            });
+        }
+
+        async function renderHome(searchQuery = '') {
+            const content = document.getElementById('mainContent');
+            let videos = await getAllVideosFromDB();
+
+            if (searchQuery.trim() !== '') {
+                videos = videos.filter(v => v.title.toLowerCase().includes(searchQuery.toLowerCase()));
+            }
+
+            if (videos.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-film"></i>
+                        <h2>لا توجد فيديوهات مرفوعة حتى الآن</h2>
+                        <p>${currentUser?.isAdmin ? 'اضغط على زر رفع فيديو جديد من الأعلى لاختيار فيديو من جهازك!' : 'يرجى انتظار المالك لرفع الفيديوهات.'}</p>
+                        ${currentUser?.isAdmin ? `<button class="btn btn-primary" style="margin:15px auto;" onclick="openAddVideoModal()"><i class="fa-solid fa-plus"></i> اختر فيديو من جهازك الآن</button>` : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            let cardsHTML = videos.map(video => {
+                const thumb = video.thumbnail || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&q=80';
+                return `
+                <div class="video-card" onclick="playVideo('${video.id}')">
+                    <div class="thumbnail-container">
+                        <img src="${thumb}" alt="${video.title}">
+                        <div class="play-overlay"><i class="fa-solid fa-circle-play"></i></div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-meta">
+                            <span><i class="fa-solid fa-user"></i> ${video.uploader}</span>
+                            ${currentUser?.isAdmin ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteVideo('${video.id}')" title="حذف الفيديو"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+
+            content.innerHTML = `
+                <div class="section-title">
+                    <span>الفيديوهات المرفوعة (${videos.length})</span>
+                </div>
+                <div class="video-grid">${cardsHTML}</div>
+            `;
+        }
+
+        async function playVideo(id) {
+            const tx = db.transaction('videos', 'readonly');
+            const store = tx.objectStore('videos');
+            const req = store.get(id);
+
+            req.onsuccess = () => {
+                const video = req.result;
+                if (!video) return;
+
+                const videoUrl = URL.createObjectURL(video.blob);
+                const content = document.getElementById('mainContent');
+                const comments = video.comments || [];
+
+                let commentsListHTML = comments.map((c, index) => `
+                    <div class="comment-item">
+                        <div class="avatar" style="width:30px; height:30px; font-size:0.8rem;">${c.userName.charAt(0).toUpperCase()}</div>
+                        <div class="comment-content">
+                            <div class="comment-author">
+                                <span>${c.userName}</span>
+                                <span class="comment-date">${c.date}</span>
+                            </div>
+                            <div class="comment-text">${c.text}</div>
+                        </div>
+                        ${currentUser?.isAdmin ? `<button class="delete-btn" onclick="deleteComment('${video.id}',${index})" title="حذف التعليق"><i class="fa-solid fa-xmark"></i></button>` : ''}
+                    </div>
+                `).join('');
+
+                content.innerHTML = `
+                    <div class="player-view">
+                        <button class="btn btn-secondary" onclick="renderHome()" style="align-self: flex-start;">
+                            <i class="fa-solid fa-arrow-right"></i> العودة للرئيسية
+                        </button>
+                        <div class="main-video-container">
+                            <video src="${videoUrl}" controls autoplay></video>
+                        </div>
+                        <div class="player-details">
+                            <h1 class="player-title">${video.title}</h1>
+                            <div class="player-meta">
+                                <span>بواسطة المالك: ${video.uploader}</span>
+                                <span>تاريخ الرفع: ${video.date}</span>
+                            </div>
+                            <p class="player-description">${video.description || 'لا يوجد وصف مضاف لهذا الفيديو.'}</p>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="comments-section">
+                            <div class="comments-header">
+                                <i class="fa-solid fa-comments"></i> التعليقات (${comments.length})
+                            </div>
+                            ${currentUser ? `
+                                <div class="comment-input-box">
+                                    <input type="text" id="commentInput" placeholder="اكتب تعليقك هنا...">
+                                    <button class="btn btn-primary" onclick="addComment('${video.id}')">إرسال</button>
+                                </div>
+                            ` : `
+                                <p style="color:var(--text-sub); font-size:0.85rem; margin-bottom:15px;">
+                                    يرجى <a href="#" onclick="openLoginModal()" style="color:var(--accent-color);">تسجيل الدخول</a> للتمكن من كتابة تعليق.
+                                </p>
+                            `}
+                            <div class="comments-list">
+                                ${comments.length > 0 ? commentsListHTML : '<p style="color:var(--text-sub); font-size:0.85rem;">لا توجد تعليقات بعد. كن أول من يعلق!</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+        }
+
+        function addComment(videoId) {
+            const input = document.getElementById('commentInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const tx = db.transaction('videos', 'readwrite');
+            const store = tx.objectStore('videos');
+            const req = store.get(videoId);
+
+            req.onsuccess = () => {
+                const video = req.result;
+                if (!video) return;
+
+                if (!video.comments) video.comments = [];
+                video.comments.push({
+                    userName: currentUser.name,
+                    text: text,
+                    date: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+                });
+
+                store.put(video);
+                tx.oncomplete = () => {
+                    playVideo(videoId);
+                };
+            };
+        }
+
+        function deleteComment(videoId, commentIndex) {
+            const tx = db.transaction('videos', 'readwrite');
+            const store = tx.objectStore('videos');
+            const req = store.get(videoId);
+
+            req.onsuccess = () => {
+                const video = req.result;
+                if (!video || !video.comments) return;
+
+                video.comments.splice(commentIndex, 1);
+                store.put(video);
+                tx.oncomplete = () => {
+                    playVideo(videoId);
+                };
+            };
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+        }
+
+        function showModal(htmlContent) {
+            const container = document.getElementById('modalContainer');
+            container.innerHTML = htmlContent;
+            document.getElementById('modalOverlay').classList.remove('hidden');
+        }
+
+        function openSetupAdminModal() {
+            showModal(`
+                <div class="modal-header">
+                    <h3>⚙️ إعداد حساب المالك لأول مرة</h3>
+                </div>
+                <form onsubmit="handleSetupAdmin(event)">
+                    <div class="form-group">
+                        <label>اسم المالك</label>
+                        <input type="text" id="setupName" required placeholder="أدخل اسمك الشخصي">
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="setupEmail" required placeholder="admin@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة السر الخاصة بك</label>
+                        <input type="password" id="setupPassword" required placeholder="أدخل كلمة سر جديدة">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
+                        تأكيد وإنشاء حساب المالك
+                    </button>
+                </form>
+            `);
+        }
+
+        function handleSetupAdmin(e) {
+            e.preventDefault();
+            const name = document.getElementById('setupName').value;
+            const email = document.getElementById('setupEmail').value;
+            const password = document.getElementById('setupPassword').value;
+
+            const adminUser = {
+                id: Date.now().toString(),
+                name,
+                email,
+                password,
+                isAdmin: true
+            };
+
+            users.push(adminUser);
+            currentUser = adminUser;
+            saveData();
+
+            closeModal();
+            renderHeader();
+            renderHome();
+        }
+
+        function openLoginModal() {
+            showModal(`
+                <div class="modal-header">
+                    <h3>تسجيل الدخول</h3>
+                    <button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchAuthTab('login')">تسجيل دخول</button>
+                    <button class="tab-btn" onclick="switchAuthTab('register')">حساب جديد للأصدقاء</button>
+                </div>
+                
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="loginEmail" required placeholder="أدخل البريد الإلكتروني">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة السر</label>
+                        <input type="password" id="loginPassword" required placeholder="أدخل كلمة السر">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">دخول</button>
+                </form>
+
+                <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>الاسم الكامل</label>
+                        <input type="text" id="regName" required placeholder="أدخل اسمك">
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="regEmail" required placeholder="أدخل بريدك الإلكتروني">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة السر</label>
+                        <input type="password" id="regPassword" required placeholder="أنشئ كلمة سر">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">تسجيل مشاهد جديد</button>
+                </form>
+            `);
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const btns = document.querySelectorAll('.tab-btn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                btns[0].classList.add('active');
+                btns[1].classList.remove('active');
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                btns[0].classList.remove('active');
+                btns[1].classList.add('active');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                currentUser = user;
+                saveData();
+                closeModal();
+                renderHeader();
+                renderHome();
+            } else {
+                alert('خطأ: البيانات غير صحيحة!');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+
+            if (users.some(u => u.email === email)) {
+                alert('هذا البريد مسجل بالفعل!');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now().toString(),
+                name,
+                email,
+                password,
+                isAdmin: false
+            };
+
+            users.push(newUser);
+            currentUser = newUser;
+            saveData();
+            closeModal();
+            renderHeader();
+            renderHome();
+        }
+
+        function logout() {
+            currentUser = null;
+            saveData();
+            renderHeader();
+            renderHome();
+        }
+
+        function openAddVideoModal() {
+            showModal(`
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-file-video"></i> اختيار فيديو من جهازك</h3>
+                    <button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form onsubmit="handleAddVideo(event)">
+                    <div class="form-group">
+                        <label>اختر ملف الفيديو من الكمبيوتر / الموبايل</label>
+                        <input type="file" id="videoFileInput" accept="video/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label>عنوان الفيديو</label>
+                        <input type="text" id="videoTitle" required placeholder="اكتب عنوان الفيديو هنا">
+                    </div>
+                    <div class="form-group">
+                        <label>وصف الفيديو (اختياري)</label>
+                        <textarea id="videoDesc" rows="3" placeholder="اكتب وصفاً للفيديو"></textarea>
+                    </div>
+                    <div id="uploadProgress" class="hidden">
+                        <span style="font-size:0.85rem; color:var(--text-sub);">جاري حفظ الفيديو...</span>
+                        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                    </div>
+                    <button type="submit" id="saveVideoBtn" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 15px;">
+                        حفظ ونشر الفيديو
+                    </button>
+                </form>
+            `);
+        }
+
+        async function handleAddVideo(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('videoFileInput');
+            const title = document.getElementById('videoTitle').value;
+            const desc = document.getElementById('videoDesc').value;
+
+            if (!fileInput.files || fileInput.files.length === 0) return;
+
+            const file = fileInput.files[0];
+            const saveBtn = document.getElementById('saveVideoBtn');
+            const progress = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+
+            saveBtn.disabled = true;
+            progress.classList.remove('hidden');
+            progressFill.style.width = '50%';
+
+            let thumbnailBase64 = await generateThumbnail(file);
+            progressFill.style.width = '80%';
+
+            const videoData = {
+                id: Date.now().toString(),
+                title: title,
+                description: desc,
+                blob: file,
+                thumbnail: thumbnailBase64,
+                uploader: currentUser.name,
+                date: new Date().toLocaleDateString('ar-EG'),
+                comments: []
+            };
+
+            const tx = db.transaction('videos', 'readwrite');
+            const store = tx.objectStore('videos');
+            store.put(videoData);
+
+            tx.oncomplete = () => {
+                progressFill.style.width = '100%';
+                setTimeout(() => {
+                    closeModal();
+                    renderHome();
+                }, 300);
+            };
+        }
+
+        function generateThumbnail(file) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.src = URL.createObjectURL(file);
+                video.muted = true;
+                video.playsInline = true;
+
+                video.onloadeddata = () => { video.currentTime = 1; };
+                video.onseeked = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 320;
+                    canvas.height = 180;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg'));
+                };
+                video.onerror = () => {
+                    resolve('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&q=80');
+                };
+            });
+        }
+
+        function deleteVideo(id) {
+            if (confirm('هل أنت تأكد من أنك تريد حذف هذا الفيديو نهائياً؟')) {
+                const tx = db.transaction('videos', 'readwrite');
+                const store = tx.objectStore('videos');
+                store.delete(id);
+                tx.oncomplete = () => { renderHome(); };
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('logoBtn').addEventListener('click', () => renderHome());
+            document.getElementById('navHome').addEventListener('click', () => renderHome());
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                renderHome(e.target.value);
+            });
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
